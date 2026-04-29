@@ -1,0 +1,29 @@
+# ============================================================
+#  VANO AUDIO STUDIO — Discord Access Whitelist
+#  Format : discord_username | role
+#  Roles  : premium | trial
+#  Notes  : Gunakan lowercase username Discord (bukan display name)
+#            trial = 3x export/hari, premium = unlimited
+# ============================================================
+# Last updated: 2025
+
+# ── PREMIUM USERS ───────────────────────────────────────────
+kkumasc0ups
+soundmaster_id
+
+# ── TRIAL USERS (3x export/hari) ────────────────────────────
+rbxcreator101    | trial
+testuser_001     | trial
+newmember_rblx   | trial
+audiofan_id      | trial
+roblox_noob99    | trial
+soundtest_dev    | trial
+gamemusic_rbx    | trial
+bypasser_free    | trial
+creator_baru     | trial
+studio_learner   | trial
+
+# ============================================================
+# Untuk menambah user: tambah baris baru dengan format di atas
+# Untuk block user: hapus username dari list ini
+# ============================================================
