@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>RBX Audio — Professional Audio Processor for Roblox</title>
+<meta name="description" content="Proses audio Roblox dengan tool profesional — pitch, speed, EQ, reverb, compressor, dan auto bypass copyright.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%234a8fff'/><path d='M16 6v11.55A4 4 0 1 0 18 21V10h4V6h-6z' fill='%23fff'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --accent:#4a8fff;
+  --accent2:#2d6fe0;
+  --accent3:#7ab3ff;
+  --accent-glow:rgba(74,143,255,.14);
+  --bg:#060a14;
+  --s1:#0b1220;
+  --s2:#101a2e;
+  --s3:#182338;
+  --border:#1c2d45;
+  --border2:#243650;
+  --text:#dce8ff;
+  --muted:#3d5570;
+  --muted2:#2a3f58;
+  --mono:'JetBrains Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Exo 2',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.6}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 48px;height:62px;display:flex;align-items:center;justify-content:space-between;transition:all .3s}
+nav.scrolled{background:rgba(6,10,20,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo-sq{width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 16px rgba(74,143,255,.4)}
+.nav-logo-sq svg{width:14px;height:14px;fill:#fff}
+.nav-logo-name{font-size:16px;font-weight:800;letter-spacing:-.5px;color:var(--text)}
+.nav-logo-name span{color:var(--accent)}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s;font-weight:500;letter-spacing:.2px}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{padding:9px 22px;border-radius:9px;background:var(--accent);color:#fff;font-size:13px;font-weight:700;text-decoration:none;transition:all .2s;font-family:'Exo 2',sans-serif;letter-spacing:.3px}
+.nav-cta:hover{background:var(--accent2);box-shadow:0 4px 20px rgba(74,143,255,.35)}
+
+/* HERO */
+.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:100px 48px 80px;gap:60px;max-width:1280px;margin:0 auto;position:relative}
+.hero-bg{position:fixed;inset:0;pointer-events:none;z-index:0}
+.hero-orb1{position:absolute;top:10%;left:-10%;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(74,143,255,.08) 0%,transparent 70%);pointer-events:none}
+.hero-orb2{position:absolute;bottom:20%;right:-5%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(45,111,224,.07) 0%,transparent 70%);pointer-events:none}
+.hero-grid-bg{position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:64px 64px;opacity:.06;pointer-events:none;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%)}
+
+.hero-left{position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:20px;border:1px solid rgba(74,143,255,.3);background:rgba(74,143,255,.08);color:var(--accent);font-size:11px;font-weight:700;margin-bottom:28px;letter-spacing:.8px;text-transform:uppercase}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+.hero h1{font-size:clamp(38px,4.5vw,66px);font-weight:900;line-height:1.06;letter-spacing:-2.5px;margin-bottom:22px;color:var(--text)}
+.hero h1 .hl{color:var(--accent);display:inline-block;position:relative}
+.hero h1 .hl::after{content:'';position:absolute;left:0;right:0;bottom:-2px;height:2px;background:linear-gradient(90deg,var(--accent),transparent)}
+.hero-sub{font-size:16px;color:#6a88a8;line-height:1.75;max-width:440px;margin-bottom:36px;font-weight:400}
+.hero-btns{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:52px}
+.btn-primary{padding:14px 30px;border-radius:10px;background:var(--accent);color:#fff;font-size:14px;font-weight:700;text-decoration:none;transition:all .2s;font-family:'Exo 2',sans-serif;display:inline-flex;align-items:center;gap:9px;letter-spacing:.3px}
+.btn-primary:hover{background:var(--accent2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(74,143,255,.35)}
+.btn-secondary{padding:14px 30px;border-radius:10px;border:1px solid var(--border2);color:#7a9cc0;font-size:14px;font-weight:500;text-decoration:none;transition:all .2s;font-family:'Exo 2',sans-serif}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-glow)}
+.hero-stats{display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+.stat-num{font-size:30px;font-weight:800;color:var(--accent);letter-spacing:-1px;line-height:1}
+.stat-lbl{font-size:10px;color:var(--muted);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.stat-div{width:1px;height:40px;background:var(--border)}
+
+/* HERO RIGHT - PREVIEW */
+.hero-right{position:relative;z-index:1}
+.preview-wrap{border:1px solid var(--border);border-radius:18px;overflow:hidden;background:var(--s1);box-shadow:0 24px 80px rgba(0,0,0,.5),0 0 0 1px rgba(74,143,255,.08),inset 0 1px 0 rgba(74,143,255,.1)}
+.preview-bar{height:38px;background:var(--s2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px;padding:0 14px}
+.preview-dot{width:10px;height:10px;border-radius:50%}
+.preview-url{flex:1;height:22px;background:var(--bg);border-radius:5px;margin:0 10px;display:flex;align-items:center;padding:0 10px;font-size:10px;color:var(--muted);font-family:var(--mono)}
+.preview-body{display:grid;grid-template-columns:160px 1fr 220px;height:340px}
+.p-nav{border-right:1px solid var(--border);padding:12px 0;display:flex;flex-direction:column;gap:1px}
+.pnav-item{padding:6px 12px;font-size:11px;color:var(--muted);display:flex;align-items:center;gap:7px;cursor:pointer;transition:all .15s}
+.pnav-item.on{background:var(--accent-glow);color:var(--accent)}
+.pnav-section{font-size:9px;color:var(--muted2);letter-spacing:1.5px;text-transform:uppercase;padding:10px 12px 4px;font-weight:700}
+.p-center{border-right:1px solid var(--border);display:flex;flex-direction:column}
+.p-spec{height:60px;background:var(--bg);position:relative;overflow:hidden;padding:4px 10px;border-bottom:1px solid var(--border)}
+.p-spec canvas{width:100%;height:100%}
+.pwav{height:60px;background:var(--bg);position:relative;overflow:hidden;display:flex;align-items:center;padding:0 10px;gap:1px;border-bottom:1px solid var(--border)}
+.pwbar{flex:1;border-radius:1px;min-height:2px}
+.pwbar.p{background:var(--accent)}
+.pwbar.u{background:var(--s3)}
+.ptrim{height:26px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 12px;gap:8px;font-size:10px;color:var(--muted)}
+.ptransport{height:40px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 12px;gap:6px}
+.ptbn{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted)}
+.ptbn.play{background:var(--accent);border-color:var(--accent);color:#fff;border-radius:50%;width:30px;height:30px}
+.pdrop{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;border:1px dashed var(--border);margin:10px;border-radius:8px}
+.pdrop-h{font-size:11px;font-weight:600;color:var(--muted)}
+.pdrop-s{font-size:9px;color:var(--muted2)}
+.p-right{overflow-y:auto;padding:12px}
+.pr-bypass{background:var(--accent-glow);border:1px solid rgba(74,143,255,.2);border-radius:8px;padding:9px 10px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.pr-bypass-t{font-size:11px;font-weight:700;color:var(--accent)}
+.pr-bypass-s{font-size:9px;color:rgba(74,143,255,.45);margin-top:1px}
+.pr-sw{width:28px;height:16px;border-radius:8px;background:var(--accent);position:relative}
+.pr-sw::after{content:'';position:absolute;top:2px;right:2px;width:12px;height:12px;border-radius:50%;background:#fff}
+.pr-lbl{font-size:9px;color:var(--muted2);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:7px}
+.pr-ctrl{margin-bottom:7px}
+.pr-ctrl-row{display:flex;justify-content:space-between;margin-bottom:3px}
+.pr-ctrl-lbl{font-size:10px;color:var(--muted)}
+.pr-ctrl-val{font-size:10px;color:var(--accent);font-family:var(--mono)}
+.pr-track{height:2px;background:var(--s3);border-radius:1px}
+.pr-fill{height:100%;background:var(--accent);border-radius:1px}
+
+/* FEATURES */
+.features{padding:90px 48px;max-width:1200px;margin:0 auto}
+.section-tag{font-size:11px;font-weight:700;color:var(--accent);letter-spacing:2.5px;text-transform:uppercase;text-align:center;margin-bottom:14px}
+.section-title{font-size:clamp(30px,3.5vw,48px);font-weight:900;text-align:center;letter-spacing:-2px;margin-bottom:14px;line-height:1.08}
+.section-sub{font-size:15px;color:#5a7a9a;text-align:center;max-width:480px;margin:0 auto 60px;line-height:1.75}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-radius:18px;overflow:hidden}
+.feat-item{background:var(--bg);padding:32px;transition:all .2s;border-left:2px solid transparent;position:relative}
+.feat-item:hover{background:var(--s1);border-left-color:var(--accent)}
+.feat-item:hover .feat-ic{background:var(--accent-glow);border-color:rgba(74,143,255,.4)}
+.feat-ic{width:42px;height:42px;border-radius:11px;background:rgba(74,143,255,.07);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;margin-bottom:18px;font-size:20px;transition:all .2s}
+.feat-title{font-size:15px;font-weight:700;margin-bottom:8px;letter-spacing:-.4px;color:var(--text)}
+.feat-desc{font-size:13px;color:#4a6880;line-height:1.75}
+.feat-tag{display:inline-block;margin-top:10px;font-size:9px;padding:2px 8px;border-radius:4px;background:var(--accent-glow);border:1px solid rgba(74,143,255,.2);color:var(--accent);font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+
+/* HOW IT WORKS */
+.how{padding:90px 48px;max-width:960px;margin:0 auto}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:60px;position:relative}
+.steps::before{content:'';position:absolute;top:27px;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,var(--border),var(--border),transparent)}
+.step{text-align:center;padding:0 14px;position:relative}
+.step-num{width:54px;height:54px;border-radius:50%;border:1px solid var(--border);background:var(--s1);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:13px;font-weight:700;color:var(--muted);position:relative;z-index:1;font-family:var(--mono)}
+.step.active .step-num{border-color:rgba(74,143,255,.5);background:var(--accent-glow);color:var(--accent);box-shadow:0 0 20px rgba(74,143,255,.15)}
+.step-title{font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text)}
+.step-desc{font-size:12px;color:#4a6880;line-height:1.6}
+
+/* PRICING */
+.pricing{padding:90px 48px;max-width:960px;margin:0 auto}
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:60px}
+.price-card{border:1px solid var(--border);border-radius:18px;padding:30px;background:var(--s1);position:relative;transition:all .25s}
+.price-card:hover{border-color:var(--border2);transform:translateY(-3px)}
+.price-card.featured{border-color:rgba(74,143,255,.45);background:linear-gradient(160deg,rgba(74,143,255,.06),var(--s1));box-shadow:0 0 40px rgba(74,143,255,.08)}
+.price-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:10px;font-weight:800;padding:4px 14px;border-radius:20px;white-space:nowrap;letter-spacing:.5px}
+.price-plan{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:14px}
+.price-amount{font-size:34px;font-weight:900;letter-spacing:-1.5px;color:var(--text);line-height:1;font-family:'Exo 2',sans-serif}
+.price-period{font-size:12px;color:var(--muted);margin-top:5px;margin-bottom:22px}
+.price-divider{height:1px;background:var(--border);margin-bottom:20px}
+.price-features{display:flex;flex-direction:column;gap:9px;margin-bottom:26px}
+.price-feature{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:9px}
+.price-feature::before{content:'';width:14px;height:14px;border-radius:50%;background:rgba(74,143,255,.1);border:1px solid var(--border2);flex-shrink:0}
+.price-feature.yes{color:#8ab0d4}
+.price-feature.yes::before{content:'✓';background:rgba(74,143,255,.15);border-color:rgba(74,143,255,.4);color:var(--accent);font-size:8px;display:flex;align-items:center;justify-content:center;font-weight:800}
+.price-btn{width:100%;padding:11px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;font-family:'Exo 2',sans-serif;transition:all .2s;text-align:center;text-decoration:none;display:block;letter-spacing:.3px}
+.price-card.featured .price-btn{background:var(--accent);border-color:var(--accent);color:#fff}
+.price-btn:hover{border-color:var(--accent);color:var(--accent)}
+.price-card.featured .price-btn:hover{background:var(--accent2);box-shadow:0 4px 20px rgba(74,143,255,.3)}
+
+/* CTA */
+.cta{padding:90px 48px;text-align:center}
+.cta-box{max-width:680px;margin:0 auto;border:1px solid var(--border);border-radius:22px;padding:64px 48px;background:var(--s1);position:relative;overflow:hidden}
+.cta-box::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:300px;height:300px;background:radial-gradient(circle,rgba(74,143,255,.09) 0%,transparent 70%);pointer-events:none}
+.cta-box::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(74,143,255,.3),transparent)}
+.cta h2{font-size:clamp(28px,3vw,42px);font-weight:900;letter-spacing:-1.5px;margin-bottom:14px;line-height:1.1}
+.cta p{font-size:15px;color:#4a6880;margin-bottom:30px;line-height:1.75}
+.cta-btns{display:flex;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:32px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.footer-logo{font-size:14px;font-weight:800;color:var(--muted);letter-spacing:-.3px}
+.footer-logo span{color:var(--accent)}
+.footer-links{display:flex;gap:22px}
+.footer-links a{font-size:12px;color:var(--muted);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:var(--text)}
+.footer-copy{font-size:11px;color:var(--muted2)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9998;display:none;align-items:center;justify-content:center}
+.modal-box{background:var(--s1);border:1px solid var(--border);border-radius:18px;padding:36px;max-width:420px;width:90%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.6)}
+
+@media(max-width:1024px){
+  .hero{grid-template-columns:1fr;text-align:center;gap:40px}
+  .hero-sub{margin-left:auto;margin-right:auto}
+  .hero-btns{justify-content:center}
+  .hero-stats{justify-content:center}
+  .hero-right{display:none}
+  .feat-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  nav{padding:0 22px}
+  .nav-links{display:none}
+  .hero{padding:90px 22px 60px;grid-template-columns:1fr}
+  .features,.how,.pricing,.cta{padding:60px 22px}
+  .price-grid{grid-template-columns:1fr}
+  .steps{grid-template-columns:repeat(2,1fr);gap:24px}
+  .steps::before{display:none}
+  footer{padding:22px;flex-direction:column;text-align:center}
+  .feat-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="hero-bg">
+  <div class="hero-grid-bg"></div>
+</div>
+
+<nav id="navbar">
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-sq"><svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg></div>
+    <div class="nav-logo-name">RBX<span> Audio</span></div>
+  </a>
+  <div class="nav-links">
+    <a href="#features">Fitur</a>
+    <a href="#pricing">Harga</a>
+    <a href="#how">Cara Pakai</a>
+    <a href="https://discord.gg/gKWB3s72Ua" target="_blank">Discord</a>
+  </div>
+  <a href="studio.html" class="nav-cta">Buka Studio →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-orb1"></div>
+  <div class="hero-orb2"></div>
+
+  <div class="hero-left">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      Audio Processor · Roblox Ready
+    </div>
+    <h1>PROSES AUDIO.<br><span class="hl">BYPASS COPYRIGHT.</span><br>UPLOAD ROBLOX.</h1>
+    <p class="hero-sub">Platform audio profesional untuk Roblox Creator. Pitch, speed, EQ 9 band, compressor, reverb — dan auto bypass filter copyright dalam satu klik.</p>
+    <div class="hero-btns">
+      <a href="studio.html" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
+        Mulai Gratis
+      </a>
+      <a href="#features" class="btn-secondary">Lihat Semua Fitur</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">9+</div><div class="stat-lbl">Band EQ</div></div>
+      <div class="stat-div"></div>
+      <div class="stat"><div class="stat-num">20+</div><div class="stat-lbl">Preset Audio</div></div>
+      <div class="stat-div"></div>
+      <div class="stat"><div class="stat-num">5</div><div class="stat-lbl">Format Support</div></div>
+      <div class="stat-div"></div>
+      <div class="stat"><div class="stat-num">100%</div><div class="stat-lbl">Browser-based</div></div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="preview-wrap">
+      <div class="preview-bar">
+        <div class="preview-dot" style="background:#ff5f57"></div>
+        <div class="preview-dot" style="background:#febc2e"></div>
+        <div class="preview-dot" style="background:#28c840"></div>
+        <div class="preview-url">rbxaudio.app/studio</div>
+      </div>
+      <div class="preview-body">
+        <div class="p-nav">
+          <div class="pnav-section">Workspace</div>
+          <div class="pnav-item on">♪ &nbsp;Studio</div>
+          <div class="pnav-item">⚡ &nbsp;Auto Bypass</div>
+          <div class="pnav-item">📊 &nbsp;Analyzer</div>
+          <div class="pnav-item">◈ &nbsp;Presets</div>
+          <div class="pnav-section" style="margin-top:6px">Tools</div>
+          <div class="pnav-item">⟁ &nbsp;Compressor</div>
+          <div class="pnav-item">⇄ &nbsp;Stereo Width</div>
+          <div class="pnav-item">🕓 &nbsp;History</div>
+        </div>
+        <div class="p-center">
+          <div class="p-spec"><canvas id="specCanvas" width="300" height="52"></canvas></div>
+          <div class="pwav" id="pwav"></div>
+          <div class="ptrim">
+            <span>TRIM</span>
+            <span style="color:var(--accent);font-family:var(--mono)">0:08</span>
+            <span>—</span>
+            <span style="color:var(--accent);font-family:var(--mono)">3:22</span>
+            <div style="flex:1"></div>
+            <span style="font-size:9px;padding:1px 7px;border:1px solid var(--accent);border-radius:3px;color:var(--accent)">Set</span>
+          </div>
+          <div class="ptransport">
+            <div class="ptbn">⏮</div>
+            <div class="ptbn play">▶</div>
+            <div class="ptbn">■</div>
+            <span style="font-size:10px;color:var(--accent);font-family:var(--mono);margin-left:4px">1:14 / 3:45</span>
+          </div>
+          <div class="pdrop">
+            <div class="pdrop-h">Drop audio file here</div>
+            <div class="pdrop-s">MP3 · WAV · OGG · FLAC · M4A</div>
+          </div>
+        </div>
+        <div class="p-right">
+          <div class="pr-bypass">
+            <div>
+              <div class="pr-bypass-t">⚡ Roblox Bypass</div>
+              <div class="pr-bypass-s">speed · pitch · EQ · reverb</div>
+            </div>
+            <div class="pr-sw"></div>
+          </div>
+          <div style="margin-bottom:14px">
+            <div class="pr-lbl">Processor</div>
+            <div class="pr-ctrl">
+              <div class="pr-ctrl-row"><span class="pr-ctrl-lbl">Speed</span><span class="pr-ctrl-val">1.06x</span></div>
+              <div class="pr-track"><div class="pr-fill" style="width:40%"></div></div>
+            </div>
+            <div class="pr-ctrl">
+              <div class="pr-ctrl-row"><span class="pr-ctrl-lbl">Pitch</span><span class="pr-ctrl-val">+2st</span></div>
+              <div class="pr-track"><div class="pr-fill" style="width:58%"></div></div>
+            </div>
+            <div class="pr-ctrl">
+              <div class="pr-ctrl-row"><span class="pr-ctrl-lbl">Compressor</span><span class="pr-ctrl-val">-18dB</span></div>
+              <div class="pr-track"><div class="pr-fill" style="width:45%"></div></div>
+            </div>
+          </div>
+          <div>
+            <div class="pr-lbl">EQ · 9 Band</div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="display:flex;align-items:center;gap:5px"><span style="font-size:9px;color:var(--muted2);width:28px;text-align:right">60Hz</span><div style="flex:1;height:2px;background:var(--s3);border-radius:1px;position:relative"><div style="position:absolute;top:0;height:100%;background:var(--accent);border-radius:1px;left:50%;width:10%"></div></div><span style="font-size:9px;color:var(--accent);width:16px">+2</span></div>
+              <div style="display:flex;align-items:center;gap:5px"><span style="font-size:9px;color:var(--muted2);width:28px;text-align:right">1kHz</span><div style="flex:1;height:2px;background:var(--s3);border-radius:1px;position:relative"><div style="position:absolute;top:0;height:100%;background:var(--s3);border-radius:1px;width:0%"></div></div><span style="font-size:9px;color:var(--muted2);width:16px">0</span></div>
+              <div style="display:flex;align-items:center;gap:5px"><span style="font-size:9px;color:var(--muted2);width:28px;text-align:right">16kHz</span><div style="flex:1;height:2px;background:var(--s3);border-radius:1px;position:relative"><div style="position:absolute;top:0;height:100%;background:var(--accent);border-radius:1px;left:50%;width:10%"></div></div><span style="font-size:9px;color:var(--accent);width:16px">+2</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-tag">Fitur Unggulan</div>
+  <h2 class="section-title">Semua yang kamu butuhkan</h2>
+  <p class="section-sub">Dari EQ profesional sampai auto bypass copyright — semuanya ada di satu platform.</p>
+  <div class="feat-grid">
+    <div class="feat-item">
+      <div class="feat-ic">⚡</div>
+      <div class="feat-title">Auto Bypass Copyright</div>
+      <div class="feat-desc">Satu klik untuk apply kombinasi speed, pitch, EQ, reverb, dan chorus yang optimal untuk lolos filter Roblox. Update algoritma rutin.</div>
+      <span class="feat-tag">Andalan</span>
+    </div>
+    <div class="feat-item">
+      <div class="feat-ic">🎛</div>
+      <div class="feat-title">EQ 9 Band</div>
+      <div class="feat-desc">Kontrol penuh dari 60Hz sampai 16kHz. Plus 8 preset EQ siap pakai: Bass Boost, Vocal, Lo-Fi, Rock, Pop, Jazz, Treble, dan Flat.</div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-ic">⟁</div>
+      <div class="feat-title">Compressor & Limiter</div>
+      <div class="feat-desc">Atur threshold, ratio, attack, dan release untuk suara yang padu dan profesional sebelum di-upload ke Roblox.</div>
+      <span class="feat-tag">Baru</span>
+    </div>
+    <div class="feat-item">
+      <div class="feat-ic">📊</div>
+      <div class="feat-title">Real-time Spectrum Analyzer</div>
+      <div class="feat-desc">Visualisasi frekuensi secara real-time saat kamu memutar audio. Lihat distribusi frekuensi dan pastikan audio kamu optimal.</div>
+      <span class="feat-tag">Eksklusif</span>
+    </div>
+    <div class="feat-item">
+      <div class="feat-ic">🎵</div>
+      <div class="feat-title">20+ Audio Presets</div>
+      <div class="feat-desc">Nightcore, Slowed, Slowed+Reverb, Chipmunk, Vaporwave, Deep, Anime, Radio, Chill — plus custom preset kamu sendiri.</div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-ic">⇄</div>
+      <div class="feat-title">Stereo Widener</div>
+      <div class="feat-desc">Kontrol lebar stereo dari mono penuh hingga ultra-wide. Ideal untuk musik dengan efek spatial yang kuat.</div>
+      <span class="feat-tag">Baru</span>
+    </div>
+    <div class="feat-item">
+      <div class="feat-ic">✂️</div>
+      <div class="feat-title">Trim & Crop dengan Fade</div>
+      <div class="feat-desc">Potong bagian audio, set fade in/out, dan buat loop seamless langsung di browser. Drag handle untuk precision editing.</div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-ic">🎚</div>
+      <div class="feat-title">Effects Suite Lengkap</div>
+      <div class="feat-desc">Reverb, Echo/Delay, Distortion, Chorus, Phaser, Hi-Pass Filter, Lo-Pass Filter — semua dikontrol dengan slider presisi real-time.</div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-ic">💾</div>
+      <div class="feat-title">Multi-Format Export</div>
+      <div class="feat-desc">Export ke MP3 (128/192/320 kbps) atau WAV lossless. Pilih sample rate dan bit depth sesuai kebutuhan Roblox-mu.</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-tag">Cara Pakai</div>
+  <h2 class="section-title">Simpel banget</h2>
+  <p class="section-sub">4 langkah dan audio kamu siap diupload ke Roblox dalam hitungan menit.</p>
+  <div class="steps">
+    <div class="step active">
+      <div class="step-num">01</div>
+      <div class="step-title">Login Discord</div>
+      <div class="step-desc">Login dengan akun Discord kamu dan join server RBX Audio.</div>
+    </div>
+    <div class="step active">
+      <div class="step-num">02</div>
+      <div class="step-title">Upload Audio</div>
+      <div class="step-desc">Drag & drop file MP3, WAV, OGG, FLAC, atau M4A ke studio.</div>
+    </div>
+    <div class="step active">
+      <div class="step-num">03</div>
+      <div class="step-title">Proses & Customize</div>
+      <div class="step-desc">Gunakan Auto Bypass atau atur manual EQ, effects, dan compressor.</div>
+    </div>
+    <div class="step active">
+      <div class="step-num">04</div>
+      <div class="step-title">Export & Upload</div>
+      <div class="step-desc">Download hasil proses dan upload langsung ke platform Roblox.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="section-tag">Harga</div>
+  <h2 class="section-title">Mulai gratis sekarang</h2>
+  <p class="section-sub">Upgrade kapan saja. Tidak ada biaya tersembunyi.</p>
+  <div class="price-grid">
+    <div class="price-card">
+      <div class="price-plan">Free</div>
+      <div class="price-amount">Rp 0</div>
+      <div class="price-period">Selamanya gratis</div>
+      <div class="price-divider"></div>
+      <div class="price-features">
+        <div class="price-feature yes">3x export per hari</div>
+        <div class="price-feature yes">Semua fitur audio</div>
+        <div class="price-feature yes">Auto Bypass</div>
+        <div class="price-feature yes">Spectrum Analyzer</div>
+        <div class="price-feature">Export unlimited</div>
+        <div class="price-feature">Priority support</div>
+      </div>
+      <a href="studio.html" class="price-btn">Mulai Gratis</a>
+    </div>
+    <div class="price-card featured">
+      <div class="price-badge">Populer</div>
+      <div class="price-plan">Basic</div>
+      <div class="price-amount">Rp 45.000</div>
+      <div class="price-period">per minggu</div>
+      <div class="price-divider"></div>
+      <div class="price-features">
+        <div class="price-feature yes">Export unlimited</div>
+        <div class="price-feature yes">Semua fitur audio</div>
+        <div class="price-feature yes">Auto Bypass unlimited</div>
+        <div class="price-feature yes">Custom Presets tersimpan</div>
+        <div class="price-feature yes">Priority support</div>
+        <div class="price-feature">Badge eksklusif</div>
+      </div>
+      <a href="https://discord.gg/gKWB3s72Ua" target="_blank" class="price-btn">Hubungi Admin</a>
+    </div>
+    <div class="price-card">
+      <div class="price-plan">Premium</div>
+      <div class="price-amount">Rp 100.000</div>
+      <div class="price-period">per bulan</div>
+      <div class="price-divider"></div>
+      <div class="price-features">
+        <div class="price-feature yes">Export unlimited</div>
+        <div class="price-feature yes">Semua fitur audio</div>
+        <div class="price-feature yes">Auto Bypass unlimited</div>
+        <div class="price-feature yes">Custom Presets tersimpan</div>
+        <div class="price-feature yes">Priority support</div>
+        <div class="price-feature yes">Badge Premium eksklusif</div>
+      </div>
+      <a href="https://discord.gg/gKWB3s72Ua" target="_blank" class="price-btn">Hubungi Admin</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="cta-box">
+    <h2>Siap mulai proses audiomu?</h2>
+    <p>Join ribuan Roblox creator yang sudah pakai RBX Audio untuk bypass dan proses audio mereka dengan cepat dan profesional.</p>
+    <div class="cta-btns">
+      <a href="studio.html" class="btn-primary">Buka Studio Sekarang →</a>
+      <a href="https://discord.gg/gKWB3s72Ua" target="_blank" class="btn-secondary">Join Discord</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">RBX<span> Audio</span></div>
+  <div class="footer-links">
+    <a href="#features">Fitur</a>
+    <a href="#pricing">Harga</a>
+    <a href="https://discord.gg/gKWB3s72Ua" target="_blank">Discord</a>
+    <a href="studio.html">Studio</a>
+    <a href="privacy.html">Privacy Policy</a>
+  </div>
+  <div class="footer-copy">© 2025 RBX Audio. All rights reserved.</div>
+</footer>
+
+<!-- ERROR MODAL -->
+<div class="modal-overlay" id="errorModal">
+  <div class="modal-box" id="errorBox"></div>
+</div>
+
+<script>
+// Navbar scroll
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>20);
+});
+
+// URL error handling
+const urlParams=new URLSearchParams(location.search);
+const err=urlParams.get('error');
+if(err){
+  const msgs={ip_blocked:'⚠️ Device ini sudah terdaftar dengan akun Discord lain. Gunakan akun Discord pertama kamu.',not_member:'❌ Kamu harus join server Discord kami dulu!',token_failed:'❌ Login gagal, coba lagi.',server_error:'❌ Server error, coba lagi.'};
+  const msg=msgs[err]||'❌ Login gagal.';
+  const isIpBlock=err==='ip_blocked';
+  document.getElementById('errorBox').innerHTML=`<div style="font-size:36px;margin-bottom:14px">${isIpBlock?'🚫':'❌'}</div><div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:10px">${isIpBlock?'Akses Ditolak':'Login Gagal'}</div><div style="font-size:13px;color:#4a6880;line-height:1.7;margin-bottom:24px">${msg}</div><button onclick="document.getElementById('errorModal').style.display='none'" style="padding:10px 24px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:'Exo 2',sans-serif">OK, Mengerti</button>`;
+  document.getElementById('errorModal').style.display='flex';
+  document.getElementById('errorModal').addEventListener('click',e=>{if(e.target===document.getElementById('errorModal'))document.getElementById('errorModal').style.display='none';});
+  history.replaceState({},'','/');
+}
+
+// Waveform preview
+const pwav=document.getElementById('pwav');
+const wh=[20,35,55,70,85,75,60,80,90,70,55,65,80,75,60,45,70,85,75,60,50,65,80,70,55,40,60,75,85,70,55,45,60,75,65,50,40,55,70,80,65,50,35,55,70,80,65,50,40,60,75,65,50,35,50,65,80,65,50,40,55,70,60,45,65,80,70,55,40,60];
+wh.forEach((v,i)=>{const b=document.createElement('div');b.className='pwbar '+(i<28?'p':'u');b.style.height=v+'%';pwav.appendChild(b);});
+
+// Fake spectrum analyzer for preview
+const specCanvas=document.getElementById('specCanvas');
+if(specCanvas){
+  const sCtx=specCanvas.getContext('2d');
+  const bands=60;
+  let phase=0;
+  function drawSpec(){
+    if(!sCtx)return;
+    const W=specCanvas.width,H=specCanvas.height;
+    sCtx.clearRect(0,0,W,H);
+    const bw=W/bands-1;
+    for(let i=0;i<bands;i++){
+      const x=i*(W/bands);
+      const freq=i/bands;
+      const h=Math.max(2,(Math.sin(freq*8+phase)*0.4+0.5)*(Math.exp(-freq*2)+0.1)*(H*0.85));
+      const grad=sCtx.createLinearGradient(0,H-h,0,H);
+      grad.addColorStop(0,'rgba(74,143,255,0.9)');
+      grad.addColorStop(1,'rgba(74,143,255,0.2)');
+      sCtx.fillStyle=grad;
+      sCtx.fillRect(x,H-h,Math.max(1,bw),h);
+    }
+    phase+=0.05;
+    requestAnimationFrame(drawSpec);
+  }
+  drawSpec();
+}
+</script>
+</body>
+</html>
